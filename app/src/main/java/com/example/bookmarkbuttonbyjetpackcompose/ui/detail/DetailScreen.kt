@@ -10,9 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.example.bookmarkbuttonbyjetpackcompose.ui.detail.DetailViewModel
 
 @Composable
-fun DetailScreen(navController: NavController) {
+fun DetailScreen(navController: NavController, viewModel: DetailViewModel) {
     Scaffold(content = {
         Column(
             verticalArrangement = Arrangement.Center,
