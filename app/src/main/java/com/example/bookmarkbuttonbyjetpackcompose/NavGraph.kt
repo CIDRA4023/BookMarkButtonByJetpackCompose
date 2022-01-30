@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.bookmarkbuttonbyjetpackcompose.ui.detail.DetailViewModel
+import com.example.bookmarkbuttonbyjetpackcompose.ui.main.MainScreen
 import com.example.bookmarkbuttonbyjetpackcompose.ui.main.MainViewModel
 import com.example.bookmarkbuttonbyjetpackcompose.ui.theme.BookMarkButtonByJetpackComposeTheme
 
