@@ -1,6 +1,8 @@
 package com.example.bookmarkbuttonbyjetpackcompose.model.database
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 class ItemRepositoryImpl @Inject constructor(
@@ -14,6 +16,11 @@ class ItemRepositoryImpl @Inject constructor(
 
     override fun getAll(): Flow<List<Item>> {
         return dao.getAll()
+    }
+
+    // わからない
+    override fun getById(itemId: Int): Flow<Item> {
+        return dao.getById(itemId).take(1).map { list -> list[0]}
     }
 
 

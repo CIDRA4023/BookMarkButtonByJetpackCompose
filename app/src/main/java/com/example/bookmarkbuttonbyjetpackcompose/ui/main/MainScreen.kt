@@ -1,14 +1,20 @@
 package com.example.bookmarkbuttonbyjetpackcompose.ui.main
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,36 +25,34 @@ import com.example.bookmarkbuttonbyjetpackcompose.model.database.Item
 
 @Composable
 fun MainScreen(navController: NavController, viewModel: MainViewModel) {
+    val itemList = viewModel.itemList.collectAsState(initial = emptyList())
     Scaffold(
-        topBar = { MainAppBar() },
-        content = { MainContent(navController, viewModel) }
-    )
+        topBar = { MainAppBar() }
+    ) {
+        MainContent(itemList) {
+            // わからない
+            navController.navigate("detail/${it.id}")
+        }
+    }
 }
 
 
 @Composable
-fun MainContent(navController: NavController, viewModel: MainViewModel) {
+fun MainContent(item: State<List<Item>>, itemSelected: (item: Item) -> Unit) {
 
     val title = Math.random().toString()
-    val itemList = viewModel.itemList.collectAsState(initial = emptyList())
+
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
         val (constraintButtonRef,constraintAddButton) = createRefs()
         LazyColumn() {
-            items(itemList.value) { item ->
-                CardContent(item = item)
+            items(item.value) { item ->
+                CardContent(item = item, itemSelected = itemSelected)
+
             }
-//            item {
-//                CardContent(text = "aaa")
-//                CardContent(text = "bbb")
-//                CardContent(text = "ccc")
-//
-////                Text(text = "aaa")
-////                Text(text = "bbb")
-////                Text(text = "ccc")
-//            }
+
         }
         Column(
             modifier = Modifier
@@ -58,21 +62,10 @@ fun MainContent(navController: NavController, viewModel: MainViewModel) {
                 }
                 .wrapContentSize()
         ) {
-            Button(onClick = { navController.navigate("detail") }) {
-                Text(text = "Detail")
-            }
+
             Text(text = "MainScreen")
         }
-        Button(
-            onClick = { viewModel.addItem(title) },
-            modifier = Modifier
-                .constrainAs(constraintAddButton) {
-                    bottom.linkTo(parent.bottom, margin = 16.dp)
-                    end.linkTo(parent.end, margin = 16.dp)
-                }
-        ) {
-            Text(text = "Add")
-        }
+
 
     }
 
@@ -80,21 +73,38 @@ fun MainContent(navController: NavController, viewModel: MainViewModel) {
 }
 
 @Composable
-fun CardContent(item: Item) {
+fun CardContent(item: Item, itemSelected: (item: Item) -> Unit) {
     val textFontSize = 24.sp
     val fontWeight = FontWeight.Bold
+    
+    var checked = remember { mutableStateOf(false)}
 
     Card(
         elevation = 8.dp,
         modifier = Modifier
-            .padding(8.dp)
+            .padding(16.dp)
+            .clickable { itemSelected(item) }
             .fillMaxWidth()) {
-        Text(
-            text = item.title,
-            fontSize = textFontSize,
-            fontWeight = fontWeight,
-            modifier = Modifier
-                .padding(16.dp))
+        Row( verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(
+                text = item.title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontSize = textFontSize,
+                fontWeight = fontWeight,
+                modifier = Modifier.weight(weight = 1f, fill = true)
+            )
+            IconToggleButton(
+                checked = checked.value,
+                onCheckedChange = { checked.value = it },
+            ) {
+                val tint = animateColorAsState(targetValue = if (checked.value) Color(0xFFEC407A) else Color(0xFFB0BEC5))
+                Icon(Icons.Filled.Favorite, contentDescription = "お気に入り", tint = tint.value)
+            }
+        }
+        
     }
 }
 
@@ -109,49 +119,41 @@ fun MainAppBar() {
 
 @Preview(showBackground = true)
 @Composable
-fun TestComposable() {
-    Scaffold(
-        topBar = { MainAppBar() },
-        content = {
-            ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-                val (constraintButtonRef, constraintAddButton) = createRefs()
+fun cardTestComposable() {
+    val textFontSize = 24.sp
+    val fontWeight = FontWeight.Bold
 
-                LazyColumn() {
-                    item {
-//                        CardContent(text = "aaa")
-//                        CardContent(text = "bbb")
-//                        CardContent(text = "ccc")
-                    }
-                }
-                Column(
-                    modifier = Modifier
-                        .constrainAs(constraintButtonRef) {
-                            bottom.linkTo(parent.bottom, margin = 16.dp)
-                            start.linkTo(parent.start, margin = 16.dp)
-                        }
-//                .wrapContentHeight()
-                        .wrapContentSize()
-                ) {
+    var checked = remember { mutableStateOf(false)}
 
-                    Button(onClick = {  }) {
-                        Text(text = "Detail")
-                    }
-                    Text(text = "MainScreen")
-                }
-
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .constrainAs(constraintAddButton) {
-                            bottom.linkTo(parent.bottom, margin = 16.dp)
-                            end.linkTo(parent.end, margin = 16.dp)
-                        }
-                ) {
-                    Text(text = "Add")
-                }
+    Card(
+        elevation = 8.dp,
+        modifier = Modifier
+            .padding(16.dp)
+//            .clickable { itemSelected(item) }
+            .fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(
+                text = "item.tiaaaaa",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontSize = textFontSize,
+                fontWeight = fontWeight,
+                modifier = Modifier.weight(weight = 1f, fill = true)
+            )
+            IconToggleButton(
+                checked = checked.value,
+                onCheckedChange = { checked.value = it },
+//                modifier = Modifier.padding(8.dp)
+            ) {
+                val tint = animateColorAsState(targetValue = if (checked.value) Color(0xFFEC407A) else Color(0xFFB0BEC5))
+                Icon(Icons.Filled.Favorite, contentDescription = "お気に入り", tint = tint.value)
             }
         }
-    )
 
+    }
 }
+
 

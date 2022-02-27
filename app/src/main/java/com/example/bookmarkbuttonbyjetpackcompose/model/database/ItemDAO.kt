@@ -10,6 +10,9 @@ interface ItemDAO {
     @Query("select * from item order by id")
     fun getAll(): Flow<List<Item>>
 
+    @Query("select * from Item where id=:itemId limit 1")
+    fun getById(itemId: Int): Flow<List<Item>>
+
     @Insert
     suspend fun create(todo: Item)
 
